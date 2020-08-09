@@ -1,1 +1,3 @@
-Initial changelog file is empty.
+# Changelog
+
+Added linux binary to autoreleasing.
