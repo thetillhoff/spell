@@ -2,5 +2,14 @@
 
 version: '3'
 
-includes: 
-    tag: ./Taskfile_{{OS}}.yml
+tasks:
+    tag:minor:
+        desc: Add git tag, but upgrade latest minor version
+        cmds:
+          - git tag -a "$(git tag | tail -1 | cut -d'.' -f1).$(($(git tag | tail -1 | cut -d'.' -f2)+1))" -m  "$(git tag | tail -1 | cut -d'.' -f1).$(($(git tag | tail -1 | cut -d'.' -f2)+1))"
+
+    tag:major:
+        desc: Add git tag, upgrade latest major version
+        cmds:
+          - git tag -a "v$(($(git tag | tail -1 | cut -d'.' -f1 | cut -d'v' -f2)+1)).0" -m  "v$(($(git tag | tail -1 | cut -d'.' -f1 | cut -d'v' -f2)+1)).0"
+          
