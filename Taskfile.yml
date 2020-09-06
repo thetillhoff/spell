@@ -7,7 +7,7 @@ tasks:
     build:
         desc: Build binary locally
         cmds:
-          - go build ./main.go
+          - go build
 
     tag:minor:
         desc: Add git tag, but upgrade latest minor version
