@@ -1,0 +1,15 @@
+# https://taskfile.dev
+
+version: '3'
+
+tasks:
+    minor:
+        desc: Add git tag, but upgrade latest minor version
+        cmds:
+          - git tag -a $(git tag | select -last 1).split('.')[0] + "." + ([int]$(git tag | select -last 1).split('.')[1]+1) -m "$(git tag | select -last 1).split('.')[0] + "." + ([int]$(git tag | select -last 1).split('.')[1]+1)"
+
+    major:
+        desc: Add git tag, upgrade latest major version
+        cmds:
+          - git tag -a "v"+([int]$(git tag | select -last 1).split('.')[0].substring(1)+1)+".0" -m "$("v"+([int]$(git tag | select -last 1).split('.')[0].substring(1)+1)+".0")"
+          
