@@ -13,6 +13,11 @@ tasks:
         cmds:
           - git tag -a "v$(($(git tag | tail -1 | cut -d'.' -f1 | cut -d'v' -f2)+1)).0" -m  "v$(($(git tag | tail -1 | cut -d'.' -f1 | cut -d'v' -f2)+1)).0"
     
+    push:
+      desc: Push commits and tags to origin
+      cmds:
+        - git push --follow-tags
+
     push:tags:
         desc: Push git tags to origin
         cmds:
