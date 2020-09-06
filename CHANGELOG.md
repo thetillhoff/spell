@@ -1,3 +1,3 @@
 # Changelog
 
-Added linux binary to autoreleasing.
+* Added darwin binary to autoreleasing.

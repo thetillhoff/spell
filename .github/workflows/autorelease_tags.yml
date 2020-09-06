@@ -20,20 +20,23 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
           body: |
-            See [https://github.com/${{ github.repository }}/blob/${{ github.ref }}/CHANGELOG.md](https://github.com/${{ github.repository }}/blob/${{ github.ref }}/CHANGELOG.md) for more information on what has changed.
+            See [https://github.com/${{ github.repository }}/blob/${{ github.ref }}/CHANGELOG.md](https://github.com/${{ github.repository }}/blob/${GITHUB_REF##*/}/CHANGELOG.md) for more information on what has changed.
           draft: false
           prerelease: false
       
-      - name: Compile binaries for windows
+      - name: Compile binary for windows
         shell: bash
-        run: env GOOS=windows GOARCH=amd64 go build -o ./spell.exe main.go
-      - name: Compile binaries for linux
+        run: env GOOS=windows GOARCH=amd64 go build -o ./spell_windows_amd64.exe main.go
+      - name: Compile binary for linux
         shell: bash
-        run: env GOOS=linux GOARCH=amd64 go build -o ./spell main.go
+        run: env GOOS=linux GOARCH=amd64 go build -o ./spell_linux_amd64 main.go
+      - name: Compile binary for darwin
+        shell: bash
+        run: env GOOS=darwin GOARCH=amd64 go build -o ./spell_darwin_amd64 main.go
 
       - name: Upload release assets
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           tag_name="${GITHUB_REF##*/}"
-          hub release edit -a ./spell -a ./spell.exe -m "" "$tag_name"
+          hub release edit -a ./spell_windows_amd64.exe -a ./spell_linux_amd64 -a ./spell_darwin_amd64 -m "" "$tag_name"
