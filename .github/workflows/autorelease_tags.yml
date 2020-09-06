@@ -20,7 +20,7 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
           body: |
-            See [https://github.com/${{ github.repository }}/blob/${{ github.ref }}/CHANGELOG.md](https://github.com/${{ github.repository }}/blob/${GITHUB_REF##*/}/CHANGELOG.md) for more information on what has changed.
+            See [https://github.com/${{ github.repository }}/blob/${{ github.ref }}/CHANGELOG.md](https://github.com/${{ github.repository }}/blob/${{ github.ref }}/CHANGELOG.md) for more information on what has changed.
           draft: false
           prerelease: false
       
