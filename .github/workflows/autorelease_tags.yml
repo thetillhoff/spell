@@ -1,4 +1,4 @@
-name: Release
+name: Create release
 
 on:
   push:
@@ -21,22 +21,6 @@ jobs:
           release_name: Release ${{ github.ref }}
           body: |
             See [https://github.com/${{ github.repository }}/blob/${{ github.ref }}/CHANGELOG.md](https://github.com/${{ github.repository }}/blob/${{ github.ref }}/CHANGELOG.md) for more information on what has changed.
+            Example second line.
           draft: false
           prerelease: false
-      
-      - name: Compile binary for windows
-        shell: bash
-        run: env GOOS=windows GOARCH=amd64 go build -o ./spell_windows_amd64.exe main.go
-      - name: Compile binary for linux
-        shell: bash
-        run: env GOOS=linux GOARCH=amd64 go build -o ./spell_linux_amd64 main.go
-      - name: Compile binary for darwin
-        shell: bash
-        run: env GOOS=darwin GOARCH=amd64 go build -o ./spell_darwin_amd64 main.go
-
-      - name: Upload release assets
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          tag_name="${GITHUB_REF##*/}"
-          hub release edit -a ./spell_windows_amd64.exe -a ./spell_linux_amd64 -a ./spell_darwin_amd64 -m "" "$tag_name"
