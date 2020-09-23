@@ -5,26 +5,31 @@ version: '3'
 tasks:
 
     build:
-        desc: Build binary locally
-        cmds:
-          - go build
+      desc: Build binary locally
+      cmds:
+        - cmd: go build
+          silent: true
 
     tag:minor:
-        desc: Add git tag, but upgrade latest minor version
-        cmds:
-          - git tag -a "$(git tag | tail -1 | cut -d'.' -f1).$(($(git tag | tail -1 | cut -d'.' -f2)+1))" -m  "$(git tag | tail -1 | cut -d'.' -f1).$(($(git tag | tail -1 | cut -d'.' -f2)+1))"
+      desc: Add git tag, but upgrade latest minor version
+      cmds:
+        - cmd: git tag -a "$(git tag | tail -1 | cut -d'.' -f1).$(($(git tag | tail -1 | cut -d'.' -f2)+1))" -m  "$(git tag | tail -1 | cut -d'.' -f1).$(($(git tag | tail -1 | cut -d'.' -f2)+1))"
+          silent: true
 
     tag:major:
-        desc: Add git tag, upgrade latest major version
-        cmds:
-          - git tag -a "v$(($(git tag | tail -1 | cut -d'.' -f1 | cut -d'v' -f2)+1)).0" -m  "v$(($(git tag | tail -1 | cut -d'.' -f1 | cut -d'v' -f2)+1)).0"
+      desc: Add git tag, upgrade latest major version
+      cmds:
+        - cmd: git tag -a "v$(($(git tag | tail -1 | cut -d'.' -f1 | cut -d'v' -f2)+1)).0" -m  "v$(($(git tag | tail -1 | cut -d'.' -f1 | cut -d'v' -f2)+1)).0"
+          silent: true
     
     push:
       desc: Push commits and tags to origin
       cmds:
-        - git push --follow-tags
+        - cmd: git push --follow-tags
+          silent: true
 
     push:tags:
-        desc: Push git tags to origin
-        cmds:
-          - git push origin --tags
+      desc: Push git tags to origin
+      cmds:
+        - cmd: git push origin --tags
+          silent: true
