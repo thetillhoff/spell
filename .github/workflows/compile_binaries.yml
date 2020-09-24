@@ -1,0 +1,50 @@
+name: Compile binaries and add them to release
+
+on: release
+
+jobs:
+  release-windows-amd64:
+    name: release windows/amd64
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2.3.2
+        with:
+          ref: main
+      - name: compile and release
+        uses: ngs/go-release.action@v1.01
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GOARCH: "amd64"
+          GOOS: windows
+          EXTRA_FILES: "LICENCE"
+
+
+  release-linux-amd64:
+    name: release linux/amd64
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2.3.2
+        with:
+          ref: main
+      - name: compile and release
+        uses: ngs/go-release.action@v1.01
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GOARCH: "amd64"
+          GOOS: linux
+          EXTRA_FILES: "LICENCE"
+
+  release-darwin-amd64:
+    name: release darwin/amd64
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2.3.2
+        with:
+          ref: main
+      - name: compile and release
+        uses: ngs/go-release.action@v1.01
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GOARCH: "amd64"
+          GOOS: darwin
+          EXTRA_FILES: "LICENCE"
