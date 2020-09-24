@@ -16,12 +16,10 @@ jobs:
         with:
           ref: main
 
-      - name: Set variables
+      - name: Set environment variables
         run: |
-          echo ${PWD##*/} > APP_NAME
-          echo ${GITHUB_REF##*/} > GITHUB_REF
-          cat APP_NAME
-          cat GITHUB_REF
+          echo "::set-env name=APP_NAME::${PWD##*/}" && echo $APP_NAME
+          echo "::set-env name=TAG_NAME::${GITHUB_REF##*/}" && echo $TAG_NAME
 
       - name: Create Release
         uses: actions/create-release@v1.1.4
@@ -31,7 +29,7 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
           body: |
-            See [https://github.com/${{ github.repository }}/blob/${{ github.ref }}/CHANGELOG.md](https://github.com/${{ github.repository }}/blob/$(cat GITHUB_REF)/CHANGELOG.md) for more information on what has changed.
+            See [https://github.com/${{github.repository}}/blob/${{env.TAG_NAME}}/CHANGELOG.md](https://github.com/${{github.repository}}/blob/${{env.TAG_NAME}}/CHANGELOG.md) for more information on what has changed.
           draft: false
           prerelease: false
 
