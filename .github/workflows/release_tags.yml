@@ -11,14 +11,17 @@ jobs:
     env:
       APP_NAME: spell
     steps:
-      - name: Set variables
-        run: |
-          echo ${PWD##*/} > APP_NAME
-
       - name: Checkout
         uses: actions/checkout@v2.3.2
         with:
           ref: main
+
+      - name: Set variables
+        run: |
+          echo ${PWD##*/} > APP_NAME
+          echo ${GITHUB_REF##*/} > GITHUB_REF
+          cat APP_NAME
+          cat GITHUB_REF
 
       - name: Create Release
         uses: actions/create-release@v1.1.4
@@ -28,10 +31,10 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
           body: |
-            See [https://github.com/${{ github.repository }}/blob/${{ github.ref }}/CHANGELOG.md](https://github.com/${{ github.repository }}/blob/${GITHUB_REF##*/}/CHANGELOG.md) for more information on what has changed.
+            See [https://github.com/${{ github.repository }}/blob/${{ github.ref }}/CHANGELOG.md](https://github.com/${{ github.repository }}/blob/$(cat GITHUB_REF)/CHANGELOG.md) for more information on what has changed.
           draft: false
           prerelease: false
-      
+
       - name: Compile binary for windows
         shell: bash
         run: env GOOS=windows GOARCH=amd64 go build -o ./$(cat APP_NAME)_windows_amd64.exe main.go
