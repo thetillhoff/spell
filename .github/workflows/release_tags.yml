@@ -53,11 +53,17 @@ jobs:
         with:
           ref: main
 
+      - name: Set golang version
+        uses: actions/setup-go@v2
+        with:
+          go-version: "1.15.2"
+
       - name: Compile binary by defined matrix
         shell: bash
         run: |
           echo "os: ${{ matrix.os }}"
           echo "architecture: ${{ matrix.architecture }}"
+          go version
           env GOOS=${{ matrix.os }} GOARCH=${{ matrix.architecture }} go build -o ./${APP_NAME}_${{ matrix.os }}_${{ matrix.architecture }}${FILE_EXTENSION} main.go
           sha256sum ./${APP_NAME}_${{ matrix.os }}_${{ matrix.architecture }}${FILE_EXTENSION} | cut -d " " -f 1 > ./${APP_NAME}_${{ matrix.os }}_${{ matrix.architecture }}${FILE_EXTENSION}.sha256
 
