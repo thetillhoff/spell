@@ -38,10 +38,11 @@ jobs:
           - amd64
     steps:
       - name: Set environment variables
+        shell: bash
         run: |
           echo "::set-env name=APP_NAME::${PWD##*/}" && echo $APP_NAME
           echo "::set-env name=TAG_NAME::${GITHUB_REF##*/}" && echo $TAG_NAME
-          if [[ "$os" == windows ]]; then
+          if [[ ${{ matrix.os }} == "windows" ]]; then
             echo "::set-env name=FILE_EXTENSION::.exe" && echo $FILE_EXTENSION
           else
             echo "::set-env name=FILE_EXTENSION::" && echo $FILE_EXTENSION
