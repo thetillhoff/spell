@@ -11,6 +11,10 @@ jobs:
     env:
       APP_NAME: spell
     steps:
+      - name: Set variables
+        run: |
+          echo ${PWD##*/} > APP_NAME
+
       - name: Checkout
         uses: actions/checkout@v2.3.2
         with:
@@ -30,17 +34,17 @@ jobs:
       
       - name: Compile binary for windows
         shell: bash
-        run: env GOOS=windows GOARCH=amd64 go build -o ./$(APP_NAME)_windows_amd64.exe main.go
+        run: env GOOS=windows GOARCH=amd64 go build -o ./$(cat APP_NAME)_windows_amd64.exe main.go
       - name: Compile binary for linux
         shell: bash
-        run: env GOOS=linux GOARCH=amd64 go build -o ./$(APP_NAME)_linux_amd64 main.go
+        run: env GOOS=linux GOARCH=amd64 go build -o ./$(cat APP_NAME)_linux_amd64 main.go
       - name: Compile binary for darwin
         shell: bash
-        run: env GOOS=darwin GOARCH=amd64 go build -o ./$(APP_NAME)_darwin_amd64 main.go
+        run: env GOOS=darwin GOARCH=amd64 go build -o ./$(cat APP_NAME)_darwin_amd64 main.go
 
       - name: Upload release assets
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           tag_name="${GITHUB_REF##*/}"
-          hub release edit -a ./$(APP_NAME)_windows_amd64.exe -a ./$(APP_NAME)_linux_amd64 -a ./$(APP_NAME)_darwin_amd64 -m "" "$tag_name"
+          hub release edit -a ./$(cat APP_NAME)_windows_amd64.exe -a ./$(cat APP_NAME)_linux_amd64 -a ./$(cat APP_NAME)_darwin_amd64 -m "" "$tag_name"
