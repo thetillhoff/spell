@@ -1,4 +1,4 @@
-name: Create release
+name: Release
 
 on:
   push:
@@ -6,16 +6,9 @@ on:
       - "v*"
 
 jobs:
-  release:
+  create-release:
     runs-on: ubuntu-20.04
-    env:
-      APP_NAME: spell
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2.3.2
-        with:
-          ref: main
-
       - name: Set environment variables
         run: |
           echo "::set-env name=APP_NAME::${PWD##*/}" && echo $APP_NAME
@@ -33,19 +26,44 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Compile binary for windows
+  compile-and-add-assets:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        os:
+          - windows
+          - linux
+          - darwin
+        architecture:
+          - amd64
+    steps:
+      - name: Set environment variables
+        run: |
+          echo "::set-env name=APP_NAME::${PWD##*/}" && echo $APP_NAME
+          echo "::set-env name=TAG_NAME::${GITHUB_REF##*/}" && echo $TAG_NAME
+          if [[ "$os" == windows ]]; then
+            echo "::set-env name=FILE_EXTENSION::.exe" && echo $FILE_EXTENSION
+          else
+            echo "::set-env name=FILE_EXTENSION::" && echo $FILE_EXTENSION
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@v2.3.2
+        with:
+          ref: main
+
+      - name: Compile binary by defined matrix
         shell: bash
-        run: env GOOS=windows GOARCH=amd64 go build -o ./$(cat APP_NAME)_windows_amd64.exe main.go
-      - name: Compile binary for linux
-        shell: bash
-        run: env GOOS=linux GOARCH=amd64 go build -o ./$(cat APP_NAME)_linux_amd64 main.go
-      - name: Compile binary for darwin
-        shell: bash
-        run: env GOOS=darwin GOARCH=amd64 go build -o ./$(cat APP_NAME)_darwin_amd64 main.go
+        run: |
+          echo "os: ${{ matrix.os }}"
+          echo "architecture: ${{ matrix.architecture }}"
+          env GOOS=${{ matrix.os }} GOARCH=${{ matrix.architecture }} go build -o ./${APP_NAME}_${{ matrix.os }}_${{ matrix.architecture }}${FILE_EXTENSION} main.go
+          sha256sum ./${APP_NAME}_${{ matrix.os }}_${{ matrix.architecture }}${FILE_EXTENSION} | cut -d " " -f 1 > ./${APP_NAME}_${{ matrix.os }}_${{ matrix.architecture }}${FILE_EXTENSION}.sha256
 
       - name: Upload release assets
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          tag_name="${GITHUB_REF##*/}"
-          hub release edit -a ./$(cat APP_NAME)_windows_amd64.exe -a ./$(cat APP_NAME)_linux_amd64 -a ./$(cat APP_NAME)_darwin_amd64 -m "" "$tag_name"
+          hub release edit \
+          -a ./${APP_NAME}_${{ matrix.os }}_${{ matrix.architecture }}${FILE_EXTENSION} -a ./${APP_NAME}_${{ matrix.os }}_${{ matrix.architecture }}${FILE_EXTENSION}.sha256 \
+          -m "" "$TAG_NAME"
