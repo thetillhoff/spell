@@ -10,32 +10,34 @@ tasks:
         - cmd: go build
           silent: true
 
-    tag:minor:
+    git:tag:minor:
       desc: Add git tag, but upgrade latest minor version
       cmds:
         - cmd: git tag -a "$(git tag | sort -V | tail -1 | cut -d'.' -f1).$(($(git tag | sort -V | tail -1 | cut -d'.' -f2)+1))" -m  "$(git tag | sort -V | tail -1 | cut -d'.' -f1).$(($(git tag | sort -V | tail -1 | cut -d'.' -f2)+1))"
           silent: true
 
-    tag:major:
+    git:tag:major:
       desc: Add git tag, upgrade latest major version
       cmds:
         - cmd: git tag -a "v$(($(git tag | sort -V | tail -1 | cut -d'.' -f1 | cut -d'v' -f2)+1)).0" -m  "v$(($(git tag | sort -V | tail -1 | cut -d'.' -f1 | cut -d'v' -f2)+1)).0"
           silent: true
     
-    tag:deletelatest:
+    git:tag:deletelatest:
       desc: Delete latest (local) tag
       cmds:
         - cmd: git tag -d $(git tag | sort -V | tail -1)
           silent: true
 
-    push:
-      desc: Push commits and tags to origin
+    release:minor:
+      desc: Create new minor version tag and push
       cmds:
+        - task: git:tag:minor
         - cmd: git push --follow-tags
           silent: true
 
-    push:tags:
-      desc: Push git tags to origin
+    release:major:
+      desc: Create new major version tag and push
       cmds:
-        - cmd: git push --tags
+        - task: git:tag:major
+        - cmd: git push --follow-tags
           silent: true
