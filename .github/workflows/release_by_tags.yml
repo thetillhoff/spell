@@ -106,7 +106,7 @@ jobs:
           Architecture: amd64
           Maintainer: Till Hoffmann <till.hoffmann@enforge.de>
           Homepage: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}
-          Installed-Size: $(du -sx --exclude DEBIAN ${APP_NAME}-${TAG_NAME:1})
+          Installed-Size: $(du -sx --exclude DEBIAN ${APP_NAME}-${TAG_NAME:1}/ | cut -f1)
           Provides: ${APP_NAME}
           Conflicts: ${APP_NAME}
           Replaces: ${APP_NAME}
