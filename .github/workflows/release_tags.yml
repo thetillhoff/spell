@@ -95,7 +95,7 @@ jobs:
       - name: Create deb-package for x64
         run: |
           sudo apt-get install -y devscripts
-          cd ./.packaging
+          cd .packaging
           mkdir -p ${APP_NAME}-${TAG_NAME}/DEBIAN
           echo "Package: ${APP_NAME}
           Version: ${TAG_NAME}
