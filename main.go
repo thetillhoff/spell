@@ -133,5 +133,5 @@ func spellLetter(letter rune, mode string) {
 // returns: nothing
 // prints: help
 func help() {
-	fmt.Printf("usage:\n$> spell [-german|-nato<default>] <what to spell>")
+	fmt.Printf("  usage:\n  $> spell [-german|-nato<default>] <what to spell>")
 }
