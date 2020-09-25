@@ -109,8 +109,8 @@ jobs:
           Conflicts: ${APP_NAME}
           Replaces: ${APP_NAME}
           Description: short example description
-          long example description
-          second line of long example description
+           long example description
+           second line of long example description
           " > ${APP_NAME}-${TAG_NAME:1}/DEBIAN/control
           cp ./postrm ${APP_NAME}-${TAG_NAME:1}/DEBIAN/
           mkdir -p ${APP_NAME}-${TAG_NAME:1}/usr/local/bin
