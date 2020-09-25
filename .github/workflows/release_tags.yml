@@ -96,9 +96,9 @@ jobs:
         run: |
           sudo apt-get install -y devscripts
           cd .packaging
-          mkdir -p ${APP_NAME}-${TAG_NAME}/DEBIAN
+          mkdir -p ${APP_NAME}-${TAG_NAME:1}/DEBIAN
           echo "Package: ${APP_NAME}
-          Version: ${TAG_NAME}
+          Version: ${TAG_NAME:1}
           Section: unkown
           Depends: 
           Priority: optional
@@ -111,17 +111,17 @@ jobs:
           Description: short example description
           long example description
           second line of long example description
-          " > ${APP_NAME}-${TAG_NAME}/DEBIAN/control
-          cp ./postrm ${APP_NAME}-${TAG_NAME}/DEBIAN/
-          mkdir -p ${APP_NAME}-${TAG_NAME}/usr/local/bin
-          wget ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/releases/download/${TAG_NAME}/${APP_NAME}_linux_amd64 -O ${APP_NAME}-${TAG_NAME}/${APP_NAME}
-          dpkg-deb --build ${APP_NAME}-${TAG_NAME}/
+          " > ${APP_NAME}-${TAG_NAME:1}/DEBIAN/control
+          cp ./postrm ${APP_NAME}-${TAG_NAME:1}/DEBIAN/
+          mkdir -p ${APP_NAME}-${TAG_NAME:1}/usr/local/bin
+          wget ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/releases/download/${TAG_NAME}/${APP_NAME}_linux_amd64 -O ${APP_NAME}-${TAG_NAME:1}/${APP_NAME}
+          dpkg-deb --build ${APP_NAME}-${TAG_NAME:1}/
       
       - name: Upload deb-package
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           hub release edit \
-          -a ./${APP_NAME}-${TAG_NAME}.deb \
+          -a ./${APP_NAME}-${TAG_NAME:1}.deb \
           -m "" "$TAG_NAME"
       
