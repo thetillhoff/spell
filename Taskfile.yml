@@ -3,7 +3,7 @@
 version: '3'
 
 includes:
-  git: ../Taskfile.yml
+  global: ../Taskfile.yml
 
 tasks:
 
