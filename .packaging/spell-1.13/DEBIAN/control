@@ -1,0 +1,15 @@
+Package: spell
+Version: 1.13
+Section: unkown
+Depends: 
+Priority: optional
+Architecture: amd64
+Maintainer: Till Hoffmann <till.hoffmann@enforge.de>
+Homepage: https://github.com/tillhoff/spell
+Vcs-Git: https://github.com/tillhoff/spell.git
+Vcs-Browser: https://github.com/tillhoff/spell
+Provides: spell
+Conflicts: spell
+Replaces: spell
+Description: example description
+ second line of description
