@@ -122,6 +122,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           hub release edit \
-          -a ./${APP_NAME}-${TAG_NAME:1}.deb \
+          -a .packaging/${APP_NAME}-${TAG_NAME:1}.deb \
           -m "" "$TAG_NAME"
       
