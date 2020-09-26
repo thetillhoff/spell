@@ -84,6 +84,16 @@ jobs:
           name: release-assets
           path: ./${{ env.APP_NAME }}_${{ matrix.os }}_${{ matrix.architecture }}${{ env.FILE_EXTENSION }}
 
+      - name: Create failure-message
+        if: ${{ failure() || cancelled() }}
+        run: printf "${{ github.job }}" > failure
+      - name: Upload failure-message
+        if: ${{ failure() || cancelled() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: failure-messages
+          path: ./failure
+
   create-deb-file:
     needs: compile-and-add-assets
     runs-on: ubuntu-20.04
@@ -142,4 +152,42 @@ jobs:
           hub release edit \
           -a .packaging/${{ env.APP_NAME }}-${TAG_NAME:1}.deb \
           -m "" "$TAG_NAME"
-      
+
+      - name: Create failure-message
+        if: ${{ failure() || cancelled() }}
+        run: printf "${{ github.job }}" > failure
+      - name: Upload failure-message
+        if: ${{ failure() || cancelled() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: failure-messages
+          path: ./failure
+
+  rollback-release:
+    needs: 
+      - create-release
+      - compile-and-add-assets
+      - create-deb-file
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Set environment variables
+        run: |
+          echo "::set-env name=APP_NAME::${PWD##*/}" && echo $APP_NAME
+          echo "::set-env name=TAG_NAME::${GITHUB_REF##*/}" && echo $TAG_NAME
+
+      - name: Download failure-messages
+        uses: actions/download-artifact@v2
+        with:
+          name: failure-messages
+
+      - name: Rollback latest release
+        run: |
+          if test -f "./failure"; then
+            printf "Problem occured on job $(cat ./failure)."
+            hub release delete ${TAG_NAME}
+            REMOTE="https://github-actions:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+            git push --delete "${REMOTE}" ${TAG_NAME}
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
