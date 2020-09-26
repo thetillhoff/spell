@@ -78,11 +78,11 @@ jobs:
           -a ./${APP_NAME}_${{ matrix.os }}_${{ matrix.architecture }}${FILE_EXTENSION} -a ./${APP_NAME}_${{ matrix.os }}_${{ matrix.architecture }}${FILE_EXTENSION}.sha256 \
           -m "" "$TAG_NAME"
 
-      - name: Upload release assets for next job(s)
+      - name: Upload compiled binary for next job(s)
         uses: actions/upload-artifact@v2
         with:
           name: release-assets
-          path: ./*
+          path: ./${APP_NAME}_${{ matrix.os }}_${{ matrix.architecture }}${FILE_EXTENSION}
 
   create-deb-file:
     needs: compile-and-add-assets
