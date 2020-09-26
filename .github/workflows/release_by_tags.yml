@@ -65,17 +65,17 @@ jobs:
           echo "os: ${{ matrix.os }}"
           echo "architecture: ${{ matrix.architecture }}"
           go version
-          env GOOS=${{ matrix.os }} GOARCH=${{ matrix.architecture }} go build -o ./${APP_NAME}_${{ matrix.os }}_${{ matrix.architecture }}${FILE_EXTENSION} main.go
+          env GOOS=${{ matrix.os }} GOARCH=${{ matrix.architecture }} go build -o ./${{ env.APP_NAME }}_${{ matrix.os }}_${{ matrix.architecture }}${FILE_EXTENSION} main.go
           # If FILE_EXTENSION is empty, there is no need to make the binary executable, because it is for windows.
-          if test -z "${FILE_EXTENSION}"; then chmod +x ./${APP_NAME}_${{ matrix.os }}_${{ matrix.architecture }}${FILE_EXTENSION}; fi
-          sha256sum ./${APP_NAME}_${{ matrix.os }}_${{ matrix.architecture }}${FILE_EXTENSION} | cut -d " " -f 1 > ./${APP_NAME}_${{ matrix.os }}_${{ matrix.architecture }}${FILE_EXTENSION}.sha256
+          if test -z "${FILE_EXTENSION}"; then chmod +x ./${{ env.APP_NAME }}_${{ matrix.os }}_${{ matrix.architecture }}${FILE_EXTENSION}; fi
+          sha256sum ./${{ env.APP_NAME }}_${{ matrix.os }}_${{ matrix.architecture }}${FILE_EXTENSION} | cut -d " " -f 1 > ./${{ env.APP_NAME }}_${{ matrix.os }}_${{ matrix.architecture }}${FILE_EXTENSION}.sha256
 
       - name: Upload release assets
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           hub release edit \
-          -a ./${APP_NAME}_${{ matrix.os }}_${{ matrix.architecture }}${FILE_EXTENSION} -a ./${APP_NAME}_${{ matrix.os }}_${{ matrix.architecture }}${FILE_EXTENSION}.sha256 \
+          -a ./${{ env.APP_NAME }}_${{ matrix.os }}_${{ matrix.architecture }}${FILE_EXTENSION} -a ./${{ env.APP_NAME }}_${{ matrix.os }}_${{ matrix.architecture }}${FILE_EXTENSION}.sha256 \
           -m "" "$TAG_NAME"
 
       - name: Upload compiled binary for next job(s)
@@ -113,39 +113,36 @@ jobs:
         run: |
           sudo apt-get install -y devscripts >/dev/null
           # Due to github actions bug https://github.com/actions/upload-artifact/issues/38 permissions have to be reset
-          chmod +x ./${APP_NAME}_linux_amd64
-          mkdir -p .packaging/${APP_NAME}-${TAG_NAME:1}/DEBIAN
-          cp .packaging/postrm .packaging/${APP_NAME}-${TAG_NAME:1}/DEBIAN/
-          mkdir -p .packaging/${APP_NAME}-${TAG_NAME:1}${FILEPATH}
-          cp ./${APP_NAME}_linux_amd64 .packaging/${APP_NAME}-${TAG_NAME:1}${FILEPATH}/${APP_NAME}
+          chmod +x ./${{ env.APP_NAME }}_linux_amd64
+          mkdir -p .packaging/${{ env.APP_NAME }}-${TAG_NAME:1}/DEBIAN
+          cp .packaging/postrm .packaging/${{ env.APP_NAME }}-${TAG_NAME:1}/DEBIAN/
+          mkdir -p .packaging/${{ env.APP_NAME }}-${TAG_NAME:1}${FILEPATH}
+          cp ./${{ env.APP_NAME }}_linux_amd64 .packaging/${{ env.APP_NAME }}-${TAG_NAME:1}${FILEPATH}/${{ env.APP_NAME }}
           # Changing directory!
           cd .packaging
-          echo "Package: ${APP_NAME}
+          echo "Package: ${{ env.APP_NAME }}
           Version: ${TAG_NAME:1}
-          # Section names can be derived from https://packages.debian.org/buster/, look into the desired category name and take the last part of the url
           Section: utils
           Depends: 
           Priority: optional
           Architecture: amd64
           Maintainer: Till Hoffmann <till.hoffmann@enforge.de>
           Homepage: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}
-          Installed-Size: $(du -sx --exclude DEBIAN ${APP_NAME}-${TAG_NAME:1}/ | cut -f1)
-          Provides: ${APP_NAME}
-          Conflicts: ${APP_NAME}
-          Replaces: ${APP_NAME}
-          # short description shouldn't be longer than 60 characters
+          Installed-Size: $(du -sx --exclude DEBIAN ${{ env.APP_NAME }}-${TAG_NAME:1}/ | cut -f1)
+          Provides: ${{ env.APP_NAME }}
+          Conflicts: ${{ env.APP_NAME }}
+          Replaces: ${{ env.APP_NAME }}
           Description: short example description
-          # long description
            long example description
            second line of long example description
-          " > ./${APP_NAME}-${TAG_NAME:1}/DEBIAN/control
-          dpkg-deb --build ${APP_NAME}-${TAG_NAME:1}/
+          " > ./${{ env.APP_NAME }}-${TAG_NAME:1}/DEBIAN/control
+          dpkg-deb --build ${{ env.APP_NAME }}-${TAG_NAME:1}/
       
       - name: Upload deb-package
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           hub release edit \
-          -a .packaging/${APP_NAME}-${TAG_NAME:1}.deb \
+          -a .packaging/${{ env.APP_NAME }}-${TAG_NAME:1}.deb \
           -m "" "$TAG_NAME"
       
