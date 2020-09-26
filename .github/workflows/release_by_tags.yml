@@ -67,7 +67,7 @@ jobs:
           go version
           env GOOS=${{ matrix.os }} GOARCH=${{ matrix.architecture }} go build -o ./${APP_NAME}_${{ matrix.os }}_${{ matrix.architecture }}${FILE_EXTENSION} main.go
           # If FILE_EXTENSION is empty, there is no need to make the binary executable, because it is for windows.
-          if test -z "${FILE_EXTENSION}" then chmod +x ./${APP_NAME}_${{ matrix.os }}_${{ matrix.architecture }}${FILE_EXTENSION} fi
+          if test -z "${FILE_EXTENSION}"; then chmod +x ./${APP_NAME}_${{ matrix.os }}_${{ matrix.architecture }}${FILE_EXTENSION}; fi
           sha256sum ./${APP_NAME}_${{ matrix.os }}_${{ matrix.architecture }}${FILE_EXTENSION} | cut -d " " -f 1 > ./${APP_NAME}_${{ matrix.os }}_${{ matrix.architecture }}${FILE_EXTENSION}.sha256
 
       - name: Upload release assets
