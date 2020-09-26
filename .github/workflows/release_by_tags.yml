@@ -66,6 +66,7 @@ jobs:
           echo "architecture: ${{ matrix.architecture }}"
           go version
           env GOOS=${{ matrix.os }} GOARCH=${{ matrix.architecture }} go build -o ./${APP_NAME}_${{ matrix.os }}_${{ matrix.architecture }}${FILE_EXTENSION} main.go
+          chmod +x ./${APP_NAME}*
           sha256sum ./${APP_NAME}_${{ matrix.os }}_${{ matrix.architecture }}${FILE_EXTENSION} | cut -d " " -f 1 > ./${APP_NAME}_${{ matrix.os }}_${{ matrix.architecture }}${FILE_EXTENSION}.sha256
 
       - name: Upload release assets
