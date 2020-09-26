@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"unicode"
 )
 
 func main() {
@@ -21,6 +22,11 @@ func main() {
 	flag.BoolVar(&GERMANmode, "german", false, "[optional] Enable GERMAN spelling mode")
 	flag.Parse()
 
+	if !NATOmode && !GERMANmode { // if no mode is set specifically
+		NATOmode = true // set default mode
+	}
+
+	// convert flags to mode-strings
 	if NATOmode && !GERMANmode {
 		mode = "NATO"
 	} else if GERMANmode && !NATOmode {
@@ -47,7 +53,7 @@ func main() {
 		for _, letter := range argsWithoutProg {
 			if letter == ' ' {
 				fmt.Printf("\n")
-			} else {
+			} else if unicode.IsLetter(letter) {
 				spellLetter(letter, mode)
 			}
 		}
