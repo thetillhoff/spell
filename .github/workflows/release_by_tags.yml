@@ -101,6 +101,7 @@ jobs:
           cp ./postrm ${APP_NAME}-${TAG_NAME:1}/DEBIAN/
           mkdir -p ${APP_NAME}-${TAG_NAME:1}${FILEPATH}
           wget ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/releases/download/${TAG_NAME}/${APP_NAME}_linux_amd64 -O ${APP_NAME}-${TAG_NAME:1}${FILEPATH}/${APP_NAME}
+          chmod +x ${APP_NAME}-${TAG_NAME:1}${FILEPATH}/${APP_NAME}
           echo "Package: ${APP_NAME}
           Version: ${TAG_NAME:1}
           Section: unkown
