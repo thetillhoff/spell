@@ -104,7 +104,8 @@ jobs:
           chmod +x ${APP_NAME}-${TAG_NAME:1}${FILEPATH}/${APP_NAME}
           echo "Package: ${APP_NAME}
           Version: ${TAG_NAME:1}
-          Section: unkown
+          # Section names can be derived from https://packages.debian.org/buster/, look into the desired category name and take the last part of the url
+          Section: utils
           Depends: 
           Priority: optional
           Architecture: amd64
@@ -114,7 +115,9 @@ jobs:
           Provides: ${APP_NAME}
           Conflicts: ${APP_NAME}
           Replaces: ${APP_NAME}
+          # short description shouldn't be longer than 60 characters
           Description: short example description
+          # long description
            long example description
            second line of long example description
           " > ${APP_NAME}-${TAG_NAME:1}/DEBIAN/control
