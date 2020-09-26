@@ -82,7 +82,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: release-assets
-          path: ./${APP_NAME}_${{ matrix.os }}_${{ matrix.architecture }}${FILE_EXTENSION}
+          path: ./${{ env.APP_NAME }}_${{ matrix.os }}_${{ matrix.architecture }}${{ env.FILE_EXTENSION }}
 
   create-deb-file:
     needs: compile-and-add-assets
