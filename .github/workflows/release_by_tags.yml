@@ -111,7 +111,7 @@ jobs:
 
       - name: Create deb-package for x64
         run: |
-          sudo apt-get install -y devscripts
+          sudo apt-get install -y devscripts >/dev/null
           cd .packaging
           mkdir -p ${APP_NAME}-${TAG_NAME:1}/DEBIAN
           cp ./postrm ${APP_NAME}-${TAG_NAME:1}/DEBIAN/
