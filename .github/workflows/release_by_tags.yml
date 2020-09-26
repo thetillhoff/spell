@@ -106,9 +106,6 @@ jobs:
         with:
           name: release-assets
 
-      - name: Display folder-structure
-        run: ls -laR
-
       - name: Create deb-package for x64
         run: |
           sudo apt-get install -y devscripts >/dev/null
