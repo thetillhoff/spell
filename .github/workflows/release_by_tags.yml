@@ -77,6 +77,12 @@ jobs:
           -a ./${APP_NAME}_${{ matrix.os }}_${{ matrix.architecture }}${FILE_EXTENSION} -a ./${APP_NAME}_${{ matrix.os }}_${{ matrix.architecture }}${FILE_EXTENSION}.sha256 \
           -m "" "$TAG_NAME"
 
+      - name: Upload release assets for next job(s)
+        uses: actions/upload-artifact@v2
+        with:
+          name: release-assets
+          path: ./*
+
   create-deb-file:
     needs: compile-and-add-assets
     runs-on: ubuntu-20.04
@@ -94,6 +100,11 @@ jobs:
         with:
           ref: main
 
+      - name: Download release assets from previous job
+        uses: actions/download-artifact@v2
+        with:
+          name: release-assets
+
       - name: Create deb-package for x64
         run: |
           sudo apt-get install -y devscripts
@@ -101,8 +112,7 @@ jobs:
           mkdir -p ${APP_NAME}-${TAG_NAME:1}/DEBIAN
           cp ./postrm ${APP_NAME}-${TAG_NAME:1}/DEBIAN/
           mkdir -p ${APP_NAME}-${TAG_NAME:1}${FILEPATH}
-          wget ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/releases/download/${TAG_NAME}/${APP_NAME}_linux_amd64 -O ${APP_NAME}-${TAG_NAME:1}${FILEPATH}/${APP_NAME}
-          chmod +x ${APP_NAME}-${TAG_NAME:1}${FILEPATH}/${APP_NAME}
+          cp ./${APP_NAME}_linux_amd64 ${APP_NAME}-${TAG_NAME:1}${FILEPATH}/${APP_NAME}
           echo "Package: ${APP_NAME}
           Version: ${TAG_NAME:1}
           # Section names can be derived from https://packages.debian.org/buster/, look into the desired category name and take the last part of the url
