@@ -114,11 +114,12 @@ jobs:
           sudo apt-get install -y devscripts >/dev/null
           # Due to github actions bug https://github.com/actions/upload-artifact/issues/38 permissions have to be reset
           chmod +x ./${APP_NAME}_linux_amd64
+          mkdir -p .packaging/${APP_NAME}-${TAG_NAME:1}/DEBIAN
+          cp .packaging/postrm .packaging/${APP_NAME}-${TAG_NAME:1}/DEBIAN/
+          mkdir -p .packaging/${APP_NAME}-${TAG_NAME:1}${FILEPATH}
+          cp ./${APP_NAME}_linux_amd64 .packaging/${APP_NAME}-${TAG_NAME:1}${FILEPATH}/${APP_NAME}
+          # Changing directory!
           cd .packaging
-          mkdir -p ${APP_NAME}-${TAG_NAME:1}/DEBIAN
-          cp ./postrm ${APP_NAME}-${TAG_NAME:1}/DEBIAN/
-          mkdir -p ${APP_NAME}-${TAG_NAME:1}${FILEPATH}
-          cp ./${APP_NAME}_linux_amd64 ${APP_NAME}-${TAG_NAME:1}${FILEPATH}/${APP_NAME}
           echo "Package: ${APP_NAME}
           Version: ${TAG_NAME:1}
           # Section names can be derived from https://packages.debian.org/buster/, look into the desired category name and take the last part of the url
@@ -137,7 +138,7 @@ jobs:
           # long description
            long example description
            second line of long example description
-          " > ${APP_NAME}-${TAG_NAME:1}/DEBIAN/control
+          " > ./${APP_NAME}-${TAG_NAME:1}/DEBIAN/control
           dpkg-deb --build ${APP_NAME}-${TAG_NAME:1}/
       
       - name: Upload deb-package
