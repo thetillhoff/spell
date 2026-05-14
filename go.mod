@@ -1,6 +1,6 @@
 module github.com/thetillhoff/spell
 
-go 1.20
+go 1.26.2
 
 require github.com/spf13/cobra v1.10.1
 
